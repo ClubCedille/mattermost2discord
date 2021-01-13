@@ -2,10 +2,16 @@
 
 APP_NAME=mm2disc
 CGO_ENABLED=0
-GOOS=linux
+GOARCH=amd64
 
 build:
-	go build -a -installsuffix cgo -o ${APP_NAME} .
+	GOOS=linux go build -a -installsuffix cgo -o ${APP_NAME} .
+
+build-windows:
+	GOOS=windows go build -a -installsuffix cgo -o ${APP_NAME} .
+
+run-windows: build-windows
+	./${APP_NAME}
 
 run: build
 	./${APP_NAME}
