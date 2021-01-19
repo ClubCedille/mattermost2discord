@@ -8,6 +8,6 @@ func SetupServer() *gin.Engine {
 
 	// Test handle - to be removed
 	r.GET("/", HelloWorld)
-
+	r.POST("/", LogMattermost)
 	return r
 }
