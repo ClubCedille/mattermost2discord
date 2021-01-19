@@ -1,10 +1,10 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/TylerBrock/colorjson"
 	"fmt"
-	)
+	"github.com/TylerBrock/colorjson"
+	"github.com/gin-gonic/gin"
+)
 
 // HelloWorld - to be removed
 func HelloWorld(c *gin.Context) {
