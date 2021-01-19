@@ -39,3 +39,9 @@ To run the tests, simply execute this command:
 $ make test
 ...
 ```
+### Git hooks
+
+To share the same versioned across the team, execute this command:
+```bash
+$ git config core.hooksPath .githooks
+```
