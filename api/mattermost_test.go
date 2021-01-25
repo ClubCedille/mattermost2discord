@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHelloWorldFunc(t *testing.T) {
+func MattermostFunc(t *testing.T) {
 	ts := httptest.NewServer(SetupServer())
 
 	// Shut down the server and block until all requests have gone through
