@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"os"
 	"strings"
 
@@ -24,7 +23,7 @@ func ProcessMattermost(ctx *gin.Context) {
 	//trim 2disc eventually
 	msgfromMM := strings.Split(mmContent.Text, os.Getenv("matterTrigger"))[1]
 
-	fmt.Println(fmt.Sprintf("message de mm :%s", msgfromMM))
+	userfromMM := mmContent.Username
 
-	discordBot(msgfromMM)
+	discordBot(userfromMM, msgfromMM)
 }

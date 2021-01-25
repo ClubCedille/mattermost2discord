@@ -8,7 +8,7 @@ import (
 )
 
 // DiscordBot activates the bot in the discord server
-func discordBot(mmContent string) {
+func discordBot(mmUser string, mmContent string) {
 
 	goBot, err := discordgo.New("Bot " + os.Getenv("dtoken"))
 
@@ -16,8 +16,8 @@ func discordBot(mmContent string) {
 		fmt.Println(err.Error())
 		return
 	}
-
-	_, err = goBot.ChannelMessageSend(os.Getenv("dchannel"), mmContent)
+	msgtoDisc := fmt.Sprintf("%s: %s", mmUser, mmContent)
+	_, err = goBot.ChannelMessageSend(os.Getenv("dchannel"), msgtoDisc)
 
 	if err != nil {
 		fmt.Println(err.Error())
