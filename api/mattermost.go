@@ -1,7 +1,6 @@
 package api
 
 import (
-	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -21,7 +20,7 @@ func ProcessMattermost(ctx *gin.Context) {
 	ctx.BindJSON(&mmContent)
 
 	//trim 2disc eventually
-	msgfromMM := strings.Split(mmContent.Text, os.Getenv("matterTrigger"))[1]
+	msgfromMM := strings.Split(mmContent.Text, TriggerWordMattermost)[1]
 
 	userfromMM := mmContent.Username
 
