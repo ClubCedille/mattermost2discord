@@ -2,10 +2,14 @@ package api
 
 import "github.com/gin-gonic/gin"
 
-type BotActions interface {
+/*
+The interface to be implemented by
+the DiscordBot and the MattermostBot
+*/
+type Bot interface {
 	SendMessage(context *gin.Context)
-	GetPayloadFrom(context *gin.Context)
-	GetContentFrom(payload Payload)
+	GetPayload(context *gin.Context) Payload
+	GetContent(payload Payload) Content
 }
 
 type Content struct {

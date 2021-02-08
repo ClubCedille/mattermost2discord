@@ -25,4 +25,3 @@ func SetupServer() *gin.Engine {
 	r.POST("/v1/discord-message/", discordBot.SendMessage)
 	return r
 }
-
