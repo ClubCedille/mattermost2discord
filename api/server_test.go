@@ -11,12 +11,14 @@ import (
 )
 
 func TestServerDiscordMessage(t *testing.T) {
+	DiscordToken = "test"
+	DiscordChannel = "test"
+	TriggerWordMattermost = "2disc"
 	ts := httptest.NewServer(SetupServer())
 
 	// Shut down the server and block until all requests have gone through
 	defer ts.Close()
 
-	TriggerWordMattermost = "2disc"
 	payload := MattermostPayload{Text: "2disc hello", Username: "hello"}
 	jsonData, _ := json.Marshal(payload)
 	resp, err := http.Post(fmt.Sprintf("%s/v1/discord-message/", ts.URL),

@@ -12,15 +12,11 @@ import (
 )
 
 func TestCreateDiscordBot(t *testing.T) {
-	DiscordToken = "321"
+	DiscordToken = "test"
+	DiscordChannel = "test"
+	TriggerWordMattermost = "test"
 	bot := CreateDiscordBot()
 	assert.NotNil(t, bot.Session)
-}
-
-func TestCreateDiscordBotError(t *testing.T) {
-	DiscordToken = ""
-	CreateDiscordBot()
-	assert.EqualError(t, errors.New("missing discord token"), "missing discord token", "")
 }
 
 func TestDiscordBotGetPayload(t *testing.T) {
@@ -68,10 +64,11 @@ func TestDiscordBotGetContent(t *testing.T) {
 func TestDiscordBotSendMessage(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	context, _ := gin.CreateTestContext(httptest.NewRecorder())
-	DiscordToken = "321"
+	DiscordToken = "test"
+	DiscordChannel = "test"
+	TriggerWordMattermost = "2disc"
 	bot := CreateDiscordBot()
 
-	TriggerWordMattermost = "2disc"
 	testPayload := MattermostPayload{
 		Text:     "2disc test",
 		Username: "test",

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"errors"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/gin-gonic/gin"
@@ -13,10 +12,7 @@ type DiscordBot struct {
 }
 
 func CreateDiscordBot() *DiscordBot {
-	if len(DiscordToken) == 0 {
-		fmt.Printf("Error: %s\n", errors.New("missing discord token"))
-	}
-
+	PanicIfDiscordBotMissesInformation()
 	session, _ := discordgo.New(fmt.Sprintf("Bot %s", DiscordToken))
 
 	return &DiscordBot{
