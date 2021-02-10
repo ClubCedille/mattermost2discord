@@ -8,7 +8,7 @@ build:
 	GOOS=linux go build -a -installsuffix cgo -o ${APP_NAME} .
 
 build-windows:
-	GOOS=windows go build -a -installsuffix cgo -o ${APP_NAME} .
+	go build -a -installsuffix cgo -o ${APP_NAME} .
 
 run-windows: build-windows
 	./${APP_NAME}
