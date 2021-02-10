@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestServerDiscordMessage(t *testing.T) {
+func TestServerDiscordMessageError(t *testing.T) {
 	DiscordToken = "test"
 	DiscordChannel = "test"
 	TriggerWordMattermost = "2disc"
@@ -26,7 +26,7 @@ func TestServerDiscordMessage(t *testing.T) {
 		bytes.NewReader(jsonData))
 
 	assert.Nil(t, err)
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 }
 
 func TestServerHealthCheck(t *testing.T) {

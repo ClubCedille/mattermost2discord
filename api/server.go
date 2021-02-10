@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -17,6 +18,7 @@ type DiscordStatus struct {
 func SetupServer() *gin.Engine {
 	discordBot := CreateDiscordBot()
 	r := gin.Default()
+	r.Use(HandleBotError)
 	r.GET("/health/", func(context *gin.Context) {
 		context.JSON(http.StatusOK, gin.H{
 			"status": "UP",
@@ -24,4 +26,16 @@ func SetupServer() *gin.Engine {
 	})
 	r.POST("/v1/discord-message/", discordBot.SendMessage)
 	return r
+}
+
+func HandleBotError(context *gin.Context) {
+	context.Next()
+	lastError := context.Errors.Last()
+	if lastError != nil {
+		fmt.Println(lastError)
+		context.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"code":  http.StatusBadRequest,
+			"error": lastError,
+		})
+	}
 }

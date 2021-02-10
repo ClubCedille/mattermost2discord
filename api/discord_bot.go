@@ -28,6 +28,7 @@ func (bot *DiscordBot) SendMessage(context *gin.Context) {
 
 	if err != nil {
 		fmt.Printf("DiscordMessageError: %s\n", err)
+		context.Error(err)
 		return
 	}
 }
@@ -37,6 +38,7 @@ func (*DiscordBot) GetPayload(context *gin.Context) Payload {
 	err := context.BindJSON(&payload.MattermostPayload)
 	if err != nil {
 		fmt.Printf("GetPayloadError: %s\n", err)
+		context.Error(err)
 		return Payload{}
 	}
 	return payload
