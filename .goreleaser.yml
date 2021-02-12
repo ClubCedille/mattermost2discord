@@ -1,0 +1,41 @@
+before:
+  hooks:
+    - go mod download
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+dockers:
+  -
+    goos: linux
+    goarch: amd64
+    goarm: ''
+    image_templates:
+      - "us.gcr.io/cedillemmdiscord:latest"
+      - "us.gcr.io/cedillemmdiscord:{{ .Major }}"
+      - "us.gcr.io/cedillemmdiscord:{{ .Major }}.{{ .Minor}}"
+      - "us.gcr.io/cedillemmdiscord:{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
+    skip_push: false
+    dockerfile: Dockerfile
+    extra_files:
+      - main.go
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'

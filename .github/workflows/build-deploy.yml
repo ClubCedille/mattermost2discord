@@ -1,0 +1,34 @@
+name: Build and Deploy
+on:
+  push:
+    tags:
+      - "*"
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  PROJECT: ${{ secrets.GCP_PROJECT }}
+  SA_KEY: ${{ secrets.SA_KEY }}
+jobs:
+  build:
+    name: Build and Publish to GCR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0.2.0
+        with:
+          service_account_key: "$SA_KEY"
+          project_id: "$PROJECT"
+      - run: gcloud --quiet auth configure-docker
+      - run: gcloud config set project "$PROJECT"
+      - name: Github releases and Docker publish
+        uses: goreleaser/goreleaser-action@v2.4.1
+        with:
+          args: release --rm-dist
+  deploy:
+    name: Deploy to Cluster
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Needs to be implemented"
