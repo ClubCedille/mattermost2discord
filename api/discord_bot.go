@@ -42,9 +42,9 @@ func (*DiscordBot) GetPayload(context *gin.Context) Payload {
 		return Payload{}
 	}
 
-	fmt.Printf("payload: %s\n", payload.MattermostPayload.Token)
 	if payload.MattermostPayload.Token != MattermostToken {
 		context.AbortWithStatus(401)
+
 	}
 
 	return payload
