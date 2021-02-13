@@ -10,13 +10,12 @@ var sugarInstance *zap.SugaredLogger;
 
 func loggerInstance() *zap.SugaredLogger {
 	if sugarInstance == nil {
-		lock.Lock()
-		defer lock.Unlock()
-		// SugaredLogger doesn't exist. Create one
+		lock.Lock() // Lock mutex to prevent overwriting Logger instance
+		defer lock.Unlock() // Release mutex when done
 		if sugarInstance == nil {
 			logger, _ := zap.NewProduction()
-			defer logger.Sync() // flushes buffer, if any
-			sugarInstance = logger.Sugar()
+			defer logger.Sync()
+			sugarInstance = logger.Sugar() // Set singleton instance
 		}
 	}
 	return sugarInstance
