@@ -2,9 +2,10 @@ package api
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/gin-gonic/gin"
-	"strings"
 )
 
 type DiscordBot struct {
@@ -14,7 +15,6 @@ type DiscordBot struct {
 func CreateDiscordBot() *DiscordBot {
 	PanicIfDiscordBotMissesInformation()
 	session, _ := discordgo.New(fmt.Sprintf("Bot %s", DiscordToken))
-
 	return &DiscordBot{
 		Session: session,
 	}
@@ -41,6 +41,12 @@ func (*DiscordBot) GetPayload(context *gin.Context) Payload {
 		context.Error(err)
 		return Payload{}
 	}
+
+	fmt.Printf("payload: %s\n", payload.MattermostPayload.Token)
+	if payload.MattermostPayload.Token != MattermostToken {
+		context.AbortWithStatus(401)
+	}
+
 	return payload
 }
 
