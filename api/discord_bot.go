@@ -5,6 +5,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/gin-gonic/gin"
 	"strings"
+	"go.uber.org/zap"
 )
 
 type DiscordBot struct {
@@ -23,12 +24,19 @@ func CreateDiscordBot() *DiscordBot {
 func (bot *DiscordBot) SendMessage(context *gin.Context) {
 	payload := bot.GetPayload(context)
 	content := bot.GetContent(payload)
+	logger := loggerInstance()
+
 	discordMessage := fmt.Sprintf("%s said: %s", content.User, content.Message)
 	_, err := bot.Session.ChannelMessageSend(DiscordChannel, discordMessage)
 
+	logger.Infof("Sending message to discord",
+		zap.String("user", content.User),
+		zap.String("message", content.Message),
+		zap.String("Channel", DiscordChannel),
+	)
+
 	if err != nil {
-		fmt.Printf("DiscordMessageError: %s\n", err)
-		context.Error(err)
+		logger.Error("DiscordMessageError", err)
 		return
 	}
 }
@@ -37,7 +45,8 @@ func (*DiscordBot) GetPayload(context *gin.Context) Payload {
 	var payload Payload
 	err := context.BindJSON(&payload.MattermostPayload)
 	if err != nil {
-		fmt.Printf("GetPayloadError: %s\n", err)
+		logger := loggerInstance()
+		logger.Error("GetPayloadError", err)
 		context.Error(err)
 		return Payload{}
 	}

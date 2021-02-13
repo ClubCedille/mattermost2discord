@@ -1,9 +1,8 @@
 package api
 
 import (
-	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
+	"github.com/gin-gonic/gin"
 )
 
 type DiscordApiCheck struct {
@@ -25,6 +24,9 @@ func SetupServer() *gin.Engine {
 		})
 	})
 	r.POST("/v1/discord-message/", discordBot.SendMessage)
+
+	logger := loggerInstance()
+	logger.Info("Server setup done.")
 	return r
 }
 
@@ -32,7 +34,8 @@ func HandleBotError(context *gin.Context) {
 	context.Next()
 	lastError := context.Errors.Last()
 	if lastError != nil {
-		fmt.Println(lastError)
+		logger := loggerInstance()
+		logger.Error(lastError)
 		context.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"code":  http.StatusBadRequest,
 			"error": lastError,
