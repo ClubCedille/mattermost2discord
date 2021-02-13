@@ -1,8 +1,8 @@
 package api
 
 import (
+	"errors"
 	"fmt"
-	"net/http"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -43,7 +43,8 @@ func (*DiscordBot) GetPayload(context *gin.Context) Payload {
 		return Payload{}
 	}
 	if payload.MattermostPayload.Token != MattermostToken {
-		context.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
+		err = errors.New("Status Unauthorized")
+		context.Error(err)
 		return Payload{}
 	}
 
