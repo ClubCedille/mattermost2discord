@@ -60,7 +60,7 @@ func TestDiscordBotGetPayloadError(t *testing.T) {
 	reader := bytes.NewReader(jsonData)
 	context.Request = httptest.NewRequest(http.MethodPost, "/v1/discord-message", reader)
 	realPayload := bot.GetPayload(context)
-	assert.Equal(t, &testPayload, realPayload.MattermostPayload)
+	assert.NotEqual(t, &testPayload, realPayload.MattermostPayload)
 }
 
 func TestDiscordBotGetContent(t *testing.T) {
