@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -41,10 +42,9 @@ func (*DiscordBot) GetPayload(context *gin.Context) Payload {
 		context.Error(err)
 		return Payload{}
 	}
-
 	if payload.MattermostPayload.Token != MattermostToken {
-		context.AbortWithStatus(401)
-
+		context.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
+		return Payload{}
 	}
 
 	return payload
