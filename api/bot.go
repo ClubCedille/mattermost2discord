@@ -1,6 +1,8 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 /*
 The interface to be implemented by
@@ -25,7 +27,9 @@ type Payload struct {
 type DiscordPayload struct{}
 
 type MattermostPayload struct {
-	Text     string `json:"text"`
-	Username string `json:"user_name"`
-	UserID   string `json:"user_id"`
+	Text      string `json:"text"`
+	Username  string `json:"user_name"`
+	UserID    string `json:"user_id"`
+	Token     string `json:"token"`
+	Timestamp string `json:"timestamp"`
 }

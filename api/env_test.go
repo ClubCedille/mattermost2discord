@@ -1,14 +1,16 @@
 package api
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPanicIfDiscordBotMissesInformation(T *testing.T) {
 	DiscordToken = ""
 	DiscordChannel = "test"
 	TriggerWordMattermost = "test"
+	MattermostToken = "test"
 	assert.Panicsf(T, func() {
 		CreateDiscordBot()
 	}, DiscordTokenMissingMessage)
@@ -22,4 +24,9 @@ func TestPanicIfDiscordBotMissesInformation(T *testing.T) {
 	assert.Panicsf(T, func() {
 		CreateDiscordBot()
 	}, MattermostTriggerwordMissingMessage)
+	TriggerWordMattermost = "test"
+	MattermostToken = ""
+	assert.Panicsf(T, func() {
+		CreateDiscordBot()
+	}, mattermostTokenMissingMessage)
 }
