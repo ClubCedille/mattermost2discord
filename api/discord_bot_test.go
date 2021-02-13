@@ -3,7 +3,6 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -46,7 +45,7 @@ func TestDiscordBotGetPayloadError(t *testing.T) {
 	context, _ := gin.CreateTestContext(httptest.NewRecorder())
 	bot.GetPayload(context)
 
-	assert.EqualErrorf(t, errors.New("invalid request"), "invalid request", "")
+	assert.EqualErrorf(t, context.Errors.Last(), "invalid request", "")
 
 	// Providing false token
 	testPayload := MattermostPayload{
@@ -60,6 +59,8 @@ func TestDiscordBotGetPayloadError(t *testing.T) {
 	reader := bytes.NewReader(jsonData)
 	context.Request = httptest.NewRequest(http.MethodPost, "/v1/discord-message", reader)
 	bot.GetPayload(context)
+
+	assert.EqualErrorf(t, context.Errors.Last(), "Status Unauthorized", "")
 }
 
 func TestDiscordBotGetContent(t *testing.T) {
