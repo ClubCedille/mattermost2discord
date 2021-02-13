@@ -37,6 +37,7 @@ func (bot *DiscordBot) SendMessage(context *gin.Context) {
 
 	if err != nil {
 		logger.Error("DiscordMessageError", err)
+ 		context.Error(err)
 		return
 	}
 }
