@@ -1,11 +1,12 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"github.com/gin-gonic/gin"
 )
 
-type DiscordApiCheck struct {
+type DiscordAPICheck struct {
 	Status *DiscordStatus `json:"status"`
 }
 
@@ -23,6 +24,7 @@ func SetupServer() *gin.Engine {
 			"status": "UP",
 		})
 	})
+
 	r.POST("/v1/discord-message/", discordBot.SendMessage)
 
 	logger := loggerInstance()
