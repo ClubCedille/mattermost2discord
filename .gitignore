@@ -19,3 +19,7 @@ vendor/
 .idea/
 # Goreleaser dist
 dist/*
+
+# Binaries, local env files, etc.
+.env
+mattermost2discord
