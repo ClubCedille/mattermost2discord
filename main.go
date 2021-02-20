@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-
 	"github.com/ClubCedille/mattermost2discord/api"
 )
 
