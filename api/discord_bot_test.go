@@ -3,7 +3,6 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -12,10 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
-
-type SetupTestSuite interface {
-	SetupTest()
-}
 
 type Suite struct {
 	suite.Suite
@@ -34,8 +29,8 @@ func (suite *Suite) SetupTest() {
 		Text:     "2disc test",
 		Username: "test",
 		UserID:   "test",
+		Token:    "test",
 	}
-
 }
 
 func TestSuite(t *testing.T) {
@@ -56,18 +51,27 @@ func (suite *Suite) TestDiscordBotGetPayload() {
 
 	reader := bytes.NewReader(jsonData)
 	context.Request = httptest.NewRequest(http.MethodPost, "/v1/discord-message", reader)
-
 	realPayload := suite.bot.GetPayload(context)
 	assert.Equal(suite.T(), &suite.testPayload, realPayload.MattermostPayload)
 }
 
-func (suite *Suite) TestDiscordBotGetPayloadError() {
+func (suite *Suite) TestDiscordGetPayloadError() {
 
 	gin.SetMode(gin.TestMode)
 	context, _ := gin.CreateTestContext(httptest.NewRecorder())
 	suite.bot.GetPayload(context)
+	assert.EqualErrorf(suite.T(), context.Errors.Last(), "invalid request", "")
 
-	assert.EqualErrorf(suite.T(), errors.New("invalid request"), "invalid request", "")
+	// Providing false token
+	suite.testPayload.Token = "foo"
+
+	jsonData, _ := json.Marshal(suite.testPayload)
+
+	reader := bytes.NewReader(jsonData)
+	context.Request = httptest.NewRequest(http.MethodPost, "/v1/discord-message", reader)
+	suite.bot.GetPayload(context)
+
+	assert.EqualErrorf(suite.T(), context.Errors.Last(), "status unauthorized", "")
 }
 
 func (suite *Suite) TestDiscordBotGetContent() {
@@ -76,7 +80,7 @@ func (suite *Suite) TestDiscordBotGetContent() {
 		&suite.testPayload,
 	})
 
-	assert.Equal(suite.T(), content.Message, "test")
+	assert.Equal(suite.T(), content.Message, suite.testPayload.Text)
 	assert.Equal(suite.T(), content.User, suite.testPayload.Username)
 }
 
