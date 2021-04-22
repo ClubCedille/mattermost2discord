@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -37,7 +38,7 @@ func (bot *DiscordBot) SendMessage(context *gin.Context) {
 
 	if err != nil {
 		logger.Error("DiscordMessageError", err)
- 		context.Error(err)
+		context.Error(err)
 		return
 	}
 }
@@ -52,7 +53,7 @@ func (*DiscordBot) GetPayload(context *gin.Context) Payload {
 		return Payload{}
 	}
 	if payload.MattermostPayload.Token != MattermostToken {
-		err = errors.New("Status Unauthorized")
+		err = errors.New("status unauthorized")
 		context.Error(err)
 		return Payload{}
 	}

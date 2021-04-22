@@ -9,97 +9,98 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestCreateDiscordBot(t *testing.T) {
-	DiscordToken = "test"
-	DiscordChannel = "test"
-	TriggerWordMattermost = "test"
-	MattermostToken = "test"
-	bot := CreateDiscordBot()
-	assert.NotNil(t, bot.Session)
+type DiscordTestSuite struct {
+	suite.Suite
+	DiscordToken          string
+	DiscordChannel        string
+	TriggerWordMattermost string
+	bot                   *DiscordBot
+	testPayload           MattermostPayload
 }
 
-func TestDiscordBotGetPayload(t *testing.T) {
-	bot := DiscordBot{}
-	gin.SetMode(gin.TestMode)
-	context, _ := gin.CreateTestContext(httptest.NewRecorder())
-
-	testPayload := MattermostPayload{
-		Text:     "test",
-		Username: "test",
-		UserID:   "test",
-		Token:    "test",
-	}
-	jsonData, _ := json.Marshal(testPayload)
-
-	reader := bytes.NewReader(jsonData)
-	context.Request = httptest.NewRequest(http.MethodPost, "/v1/discord-message", reader)
-	realPayload := bot.GetPayload(context)
-	assert.Equal(t, &testPayload, realPayload.MattermostPayload)
-}
-
-func TestDiscordBotGetPayloadError(t *testing.T) {
-	bot := DiscordBot{}
-	gin.SetMode(gin.TestMode)
-	context, _ := gin.CreateTestContext(httptest.NewRecorder())
-	bot.GetPayload(context)
-
-	assert.EqualErrorf(t, context.Errors.Last(), "invalid request", "")
-
-	// Providing false token
-	testPayload := MattermostPayload{
-		Text:     "test",
-		Username: "test",
-		UserID:   "test",
-		Token:    "foo",
-	}
-	jsonData, _ := json.Marshal(testPayload)
-
-	reader := bytes.NewReader(jsonData)
-	context.Request = httptest.NewRequest(http.MethodPost, "/v1/discord-message", reader)
-	bot.GetPayload(context)
-
-	assert.EqualErrorf(t, context.Errors.Last(), "Status Unauthorized", "")
-}
-
-func TestDiscordBotGetContent(t *testing.T) {
-	bot := DiscordBot{}
-	TriggerWordMattermost = "2disc"
-	content := bot.GetContent(Payload{
-		&DiscordPayload{},
-		&MattermostPayload{
-			Text:     "2disc test",
-			Username: "test",
-		},
-	})
-
-	assert.Equal(t, content.Message, "test")
-	assert.Equal(t, content.User, "test")
-
-}
-
-func TestDiscordBotSendMessage(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-	context, _ := gin.CreateTestContext(httptest.NewRecorder())
-	DiscordToken = "test"
-	DiscordChannel = "test"
-	TriggerWordMattermost = "2disc"
-	MattermostToken = "test"
-	bot := CreateDiscordBot()
-
-	testPayload := MattermostPayload{
+func (suite *DiscordTestSuite) SetupTest() {
+	suite.DiscordToken = "test"
+	suite.DiscordChannel = "test"
+	suite.TriggerWordMattermost = "2disc"
+	suite.bot = &DiscordBot{}
+	suite.testPayload = MattermostPayload{
 		Text:     "2disc test",
 		Username: "test",
 		UserID:   "test",
 		Token:    "test",
 	}
-	jsonData, _ := json.Marshal(testPayload)
+
+	DiscordToken = suite.DiscordToken
+	DiscordChannel = suite.DiscordChannel
+	TriggerWordMattermost = suite.TriggerWordMattermost
+	MattermostToken = suite.testPayload.Token
+}
+
+func TestDiscordBot(t *testing.T) {
+	suite.Run(t, new(DiscordTestSuite))
+}
+
+func (suite *DiscordTestSuite) TestCreateDiscordBot() {
+	bot := CreateDiscordBot()
+	assert.NotNil(suite.T(), bot.Session)
+}
+
+func (suite *DiscordTestSuite) TestDiscordBotGetPayload() {
+	gin.SetMode(gin.TestMode)
+	context, _ := gin.CreateTestContext(httptest.NewRecorder())
+
+	jsonData, _ := json.Marshal(suite.testPayload)
+
+	reader := bytes.NewReader(jsonData)
+	context.Request = httptest.NewRequest(http.MethodPost, "/v1/discord-message", reader)
+	realPayload := suite.bot.GetPayload(context)
+	assert.Equal(suite.T(), &suite.testPayload, realPayload.MattermostPayload)
+}
+
+func (suite *DiscordTestSuite) TestDiscordGetPayloadError() {
+
+	gin.SetMode(gin.TestMode)
+	context, _ := gin.CreateTestContext(httptest.NewRecorder())
+	suite.bot.GetPayload(context)
+	assert.EqualErrorf(suite.T(), context.Errors.Last(), "invalid request", "")
+
+	// Providing false token
+	suite.testPayload.Token = "foo"
+
+	jsonData, _ := json.Marshal(suite.testPayload)
+
+	reader := bytes.NewReader(jsonData)
+	context.Request = httptest.NewRequest(http.MethodPost, "/v1/discord-message", reader)
+	suite.bot.GetPayload(context)
+
+	assert.EqualErrorf(suite.T(), context.Errors.Last(), "status unauthorized", "")
+}
+
+func (suite *DiscordTestSuite) TestDiscordBotGetContent() {
+	content := suite.bot.GetContent(Payload{
+		&DiscordPayload{},
+		&suite.testPayload,
+	})
+
+	const desiredResult = "test"
+	assert.Equal(suite.T(), desiredResult, content.Message)
+	assert.Equal(suite.T(), suite.testPayload.Username, content.User)
+}
+
+func (suite *DiscordTestSuite) TestDiscordBotSendMessage() {
+	gin.SetMode(gin.TestMode)
+	context, _ := gin.CreateTestContext(httptest.NewRecorder())
+	bot := CreateDiscordBot()
+
+	jsonData, _ := json.Marshal(suite.testPayload)
 
 	reader := bytes.NewReader(jsonData)
 	context.Request = httptest.NewRequest(http.MethodPost, "/v1/discord-message", reader)
 
-	assert.NotPanics(t, func() {
+	assert.NotPanics(suite.T(), func() {
 		bot.SendMessage(context)
 	})
 }
