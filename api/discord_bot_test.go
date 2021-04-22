@@ -12,38 +12,43 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type Suite struct {
+type DiscordTestSuite struct {
 	suite.Suite
 	DiscordToken          string
 	DiscordChannel        string
 	TriggerWordMattermost string
+	bot                   *DiscordBot
 	testPayload           MattermostPayload
-	bot                   DiscordBot
 }
 
-func (suite *Suite) SetupTest() {
+func (suite *DiscordTestSuite) SetupTest() {
 	suite.DiscordToken = "test"
 	suite.DiscordChannel = "test"
-	suite.TriggerWordMattermost = "test"
+	suite.TriggerWordMattermost = "2disc"
+	suite.bot = &DiscordBot{}
 	suite.testPayload = MattermostPayload{
 		Text:     "2disc test",
 		Username: "test",
 		UserID:   "test",
 		Token:    "test",
 	}
+
+	DiscordToken = suite.DiscordToken
+	DiscordChannel = suite.DiscordChannel
+	TriggerWordMattermost = suite.TriggerWordMattermost
+	MattermostToken = suite.testPayload.Token
 }
 
-func TestSuite(t *testing.T) {
-	suite.Run(t, new(Suite))
+func TestDiscordBot(t *testing.T) {
+	suite.Run(t, new(DiscordTestSuite))
 }
 
-func (suite *Suite) TestCreateDiscordBot() {
+func (suite *DiscordTestSuite) TestCreateDiscordBot() {
 	bot := CreateDiscordBot()
 	assert.NotNil(suite.T(), bot.Session)
 }
 
-func (suite *Suite) TestDiscordBotGetPayload() {
-
+func (suite *DiscordTestSuite) TestDiscordBotGetPayload() {
 	gin.SetMode(gin.TestMode)
 	context, _ := gin.CreateTestContext(httptest.NewRecorder())
 
@@ -55,7 +60,7 @@ func (suite *Suite) TestDiscordBotGetPayload() {
 	assert.Equal(suite.T(), &suite.testPayload, realPayload.MattermostPayload)
 }
 
-func (suite *Suite) TestDiscordGetPayloadError() {
+func (suite *DiscordTestSuite) TestDiscordGetPayloadError() {
 
 	gin.SetMode(gin.TestMode)
 	context, _ := gin.CreateTestContext(httptest.NewRecorder())
@@ -74,17 +79,18 @@ func (suite *Suite) TestDiscordGetPayloadError() {
 	assert.EqualErrorf(suite.T(), context.Errors.Last(), "status unauthorized", "")
 }
 
-func (suite *Suite) TestDiscordBotGetContent() {
+func (suite *DiscordTestSuite) TestDiscordBotGetContent() {
 	content := suite.bot.GetContent(Payload{
 		&DiscordPayload{},
 		&suite.testPayload,
 	})
 
-	assert.Equal(suite.T(), content.Message, suite.testPayload.Text)
-	assert.Equal(suite.T(), content.User, suite.testPayload.Username)
+	const desiredResult = "test"
+	assert.Equal(suite.T(), desiredResult, content.Message)
+	assert.Equal(suite.T(), suite.testPayload.Username, content.User)
 }
 
-func (suite *Suite) TestDiscordBotSendMessage() {
+func (suite *DiscordTestSuite) TestDiscordBotSendMessage() {
 	gin.SetMode(gin.TestMode)
 	context, _ := gin.CreateTestContext(httptest.NewRecorder())
 	bot := CreateDiscordBot()
