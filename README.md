@@ -45,3 +45,17 @@ To share the same versioned across the team, execute this command:
 ```bash
 $ git config core.hooksPath .githooks
 ```
+
+## Configuration 
+
+### Step 1
+
+* Set up an [outgoing webhook](https://docs.mattermost.com/developer/webhooks-outgoing.html) from mattermost with a specified channel that delivers the payload to your web service with the following option selected :
+
+![Mattermost webhook Config](img/MattermostWebHook.png)
+
+
+### Step 2
+
+
+
