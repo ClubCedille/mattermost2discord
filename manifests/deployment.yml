@@ -1,0 +1,43 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mattermost2discord
+spec:
+  template:
+    spec:
+      containers:
+      - name: mattermost2discord
+        # Note: you should change this to a
+        # specific version in your downstream
+        # repository.
+        image: clubcedille/mattermost2discord:latest
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+          name: http
+        envFrom:
+        - configMapRef:
+            name: mm2disc-config
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+        resources:
+          limits:
+            cpu: '0.25'
+            memory: 128Mi
+          requests:
+            cpu: '0.125'
+            memory: 64Mi
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
