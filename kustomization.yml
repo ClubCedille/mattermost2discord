@@ -14,3 +14,11 @@ configMapGenerator:
 - name: mm2disc-config
   literals:
   - PORT=3000
+
+secretGenerator:
+- name: mm2disc-secrets
+  literals:
+  - DISCORD_TOKEN=<REPLACE_ME>
+  - DISCORD_CHANNEL=<REPLACE_ME>
+  - MATTERMOST_TOKEN=<REPLACE_ME>
+  - TRIGGER_WORD_MATTERMOST=<REPLACE_ME>

@@ -18,6 +18,8 @@ spec:
         envFrom:
         - configMapRef:
             name: mm2disc-config
+        - secretRef:
+            name: mm2disc-secrets
         securityContext:
           runAsNonRoot: true
           allowPrivilegeEscalation: false
