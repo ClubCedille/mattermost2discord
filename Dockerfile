@@ -1,5 +1,5 @@
 # Step 1 - compile source code
-FROM golang:1.15.6-buster AS builder
+FROM golang:1.16.4-buster AS builder
 
 LABEL maintainer="Club CEDILLE"
 
