@@ -2,7 +2,6 @@
 
 [![](https://github.com/cguertin14/advent-of-code-2020/workflows/CI/badge.svg)](https://github.com/ClubCedille/mattermost2discord/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ClubCedille/mattermost2discord)](https://goreportcard.com/report/github.com/ClubCedille/mattermost2discord)
-[![Coverage Status](https://coveralls.io/repos/github.com/ClubCedille/mattermost2discord/badge.svg?branch=main)](https://coveralls.io/github.com/ClubCedille/mattermost2discord?branch=main)
 
 REST API that forwards messages from Mattermost to Discord, using a callback.
 
@@ -11,6 +10,25 @@ REST API that forwards messages from Mattermost to Discord, using a callback.
 * [Go 1.16](https://golang.org/dl/)
 * [Docker](https://docs.docker.com/get-docker/)
 * [Docker-Compose](https://docs.docker.com/compose/install/)
+
+## Usage
+
+### With Kubernetes
+
+To use `mattermost2discord` with Kubernetes, simply declare a `kustomization.yml` configuration file like so:
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- https://github.com/ClubCedille/mattermost2discord?ref=v1.0.0 # Example release
+```
+
+Then, you can build your kustomize configuration like this:
+```bash
+$ kustomize build
+...
+```
 
 ## Development
 
