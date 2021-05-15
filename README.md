@@ -8,7 +8,7 @@ REST API that forwards messages from Mattermost to Discord, using a callback.
 
 ## Depencencies
 
-* [Go 1.15](https://golang.org/dl/)
+* [Go 1.16](https://golang.org/dl/)
 * [Docker](https://docs.docker.com/get-docker/)
 * [Docker-Compose](https://docs.docker.com/compose/install/)
 
