@@ -1,0 +1,40 @@
+@startuml Mattermost2Discord
+
+skinparam style strictuml
+skinparam SequenceMessageAlignment center
+
+skinparam sequence {
+ArrowColor DeepSkyBlue
+ActorBorderColor DeepSkyBlue
+LifeLineBorderColor blue
+LifeLineBackgroundColor #A9DCDF
+
+ParticipantBorderColor DeepSkyBlue
+ParticipantBackgroundColor DodgerBlue
+ParticipantFontName Impact
+ParticipantFontSize 17
+ParticipantFontColor #blue
+
+ActorBackgroundColor aqua
+ActorFontColor DeepSkyBlue
+ActorFontSize 17
+ActorFontName Aapex
+}
+
+actor User as User #WhiteSmoke
+Participant Mattermost as MM #LightSteelBlue
+Participant  "Web / HTTP" as webService #LightSteelBlue
+Participant mm2disc as mm2disc #LightSteelBlue
+Participant Discord as discord #LightSteelBlue
+
+mm2disc -[#SkyBlue]-> webService : Awaits for POST request
+User -[#SkyBlue]> MM : Uses trigger word
+MM -[#SkyBlue]> webService : Sends POST request
+mm2disc <-[#RoyalBlue]> webService : Reads request body
+
+group Processing request body
+mm2disc -[#SkyBlue]-> mm2disc : Mattermost \nToken \nauthentification
+mm2disc -[#SkyBlue]-> mm2disc : Formating Mattermost \nuser message
+end
+mm2disc -[#SkyBlue]> discord : fowards message trough \ndiscord bot
+@enduml
