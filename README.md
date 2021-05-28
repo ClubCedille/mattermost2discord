@@ -74,8 +74,6 @@ Set all of the following env variables :
 - TRIGGER_WORD_MATTERMOST : Trigger word to foward your message from mattermost to discord.
 - Listening port
 
-### 4. Hosting mm2disc on your web server & Docker Hub repo
-
 
 
 
