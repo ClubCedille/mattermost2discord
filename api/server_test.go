@@ -23,7 +23,7 @@ func TestServerDiscordMessageError(t *testing.T) {
 
 	payload := MattermostPayload{Text: "2disc hello", Username: "hello", Token: "test"}
 	jsonData, _ := json.Marshal(payload)
-	resp, err := http.Post(fmt.Sprintf("%s/v1/discord-message/", ts.URL),
+	resp, err := http.Post(fmt.Sprintf("%s/v1/discord-message", ts.URL),
 		"application/json",
 		bytes.NewReader(jsonData))
 
@@ -36,7 +36,7 @@ func TestServerHealthCheck(t *testing.T) {
 
 	defer ts.Close()
 
-	resp, err := http.Get(fmt.Sprintf("%s/health/", ts.URL))
+	resp, err := http.Get(fmt.Sprintf("%s/healthz", ts.URL))
 	var jsonData map[string]interface{}
 	_ = json.NewDecoder(resp.Body).Decode(&jsonData)
 

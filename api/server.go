@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,13 +19,13 @@ func SetupServer() *gin.Engine {
 	discordBot := CreateDiscordBot()
 	r := gin.Default()
 	r.Use(HandleBotError)
-	r.GET("/health/", func(context *gin.Context) {
+	r.GET("/healthz", func(context *gin.Context) {
 		context.JSON(http.StatusOK, gin.H{
 			"status": "UP",
 		})
 	})
 
-	r.POST("/v1/discord-message/", discordBot.SendMessage)
+	r.POST("/v1/discord-message", discordBot.SendMessage)
 
 	logger := loggerInstance()
 	logger.Info("Server setup done.")
