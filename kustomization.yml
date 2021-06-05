@@ -5,7 +5,6 @@ resources:
 - manifests/deployment.yml
 - manifests/service.yml
 - manifests/namespace.yml
-- manifests/secrets.yml
 
 namespace: mattermost2discord
 
@@ -17,3 +16,7 @@ configMapGenerator:
   literals:
   - PORT=3000
   - GIN_MODE=release
+
+images:
+- name: clubcedille/mattermost2discord
+  newTag: v1.0.3
