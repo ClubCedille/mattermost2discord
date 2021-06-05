@@ -26,7 +26,6 @@ spec:
         - secretRef:
             name: mm2disc-secrets
         securityContext:
-          runAsNonRoot: true
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
         resources:
