@@ -10,7 +10,7 @@ spec:
         # Note: you should change this to a
         # specific version in your downstream
         # repository.
-        image: clubcedille/mattermost2discord:latest
+        image: clubcedille/mattermost2discord
         ports:
         - containerPort: 3000
           protocol: TCP
