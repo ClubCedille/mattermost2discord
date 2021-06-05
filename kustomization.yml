@@ -5,6 +5,7 @@ resources:
 - manifests/deployment.yml
 - manifests/service.yml
 - manifests/namespace.yml
+- manifests/secrets.yml
 
 namespace: mattermost2discord
 
@@ -16,11 +17,3 @@ configMapGenerator:
   literals:
   - PORT=3000
   - GIN_MODE=release
-
-secretGenerator:
-- name: mm2disc-secrets
-  literals:
-  - DISCORD_TOKEN=<REPLACE_ME>
-  - DISCORD_CHANNEL=<REPLACE_ME>
-  - MATTERMOST_TOKEN=<REPLACE_ME>
-  - TRIGGER_WORD_MATTERMOST=<REPLACE_ME>
