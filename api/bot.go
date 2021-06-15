@@ -17,8 +17,9 @@ type Bot interface {
 }
 
 type Content struct {
-	User    string
-	Message string
+	User      string
+	Message   string
+	Timestamp time.Time
 }
 
 type Payload struct {

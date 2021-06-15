@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -27,10 +28,11 @@ func (suite *DiscordTestSuite) SetupTest() {
 	suite.TriggerWordMattermost = "2disc"
 	suite.bot = &DiscordBot{}
 	suite.testPayload = MattermostPayload{
-		Text:     "2disc test",
-		Username: "test",
-		UserID:   "test",
-		Token:    "test",
+		Text:      "2disc test",
+		Username:  "test",
+		UserID:    "test",
+		Token:     "test",
+		Timestamp: time.Now(),
 	}
 
 	DiscordToken = suite.DiscordToken
@@ -103,4 +105,13 @@ func (suite *DiscordTestSuite) TestDiscordBotSendMessage() {
 	assert.NotPanics(suite.T(), func() {
 		bot.SendMessage(context)
 	})
+}
+
+func (suite *DiscordTestSuite) TestDiscordBotTimestamp() {
+	content := suite.bot.GetContent(Payload{
+		&DiscordPayload{},
+		&suite.testPayload,
+	})
+
+	assert.NotEmpty(suite.T(), content.Timestamp)
 }
