@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jonboulle/clockwork"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -32,7 +32,7 @@ func (suite *DiscordTestSuite) SetupTest() {
 		Username:  "test",
 		UserID:    "test",
 		Token:     "test",
-		Timestamp: time.Now(),
+		Timestamp: clockwork.NewFakeClock().Now(),
 	}
 
 	DiscordToken = suite.DiscordToken
@@ -105,13 +105,4 @@ func (suite *DiscordTestSuite) TestDiscordBotSendMessage() {
 	assert.NotPanics(suite.T(), func() {
 		bot.SendMessage(context)
 	})
-}
-
-func (suite *DiscordTestSuite) TestDiscordBotTimestamp() {
-	content := suite.bot.GetContent(Payload{
-		&DiscordPayload{},
-		&suite.testPayload,
-	})
-
-	assert.NotEmpty(suite.T(), content.Timestamp)
 }
