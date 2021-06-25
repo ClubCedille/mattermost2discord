@@ -64,8 +64,10 @@ func (*DiscordBot) GetPayload(context *gin.Context) Payload {
 func (*DiscordBot) GetContent(payload Payload) Content {
 	message := strings.TrimSpace(strings.Split(payload.MattermostPayload.Text, TriggerWordMattermost)[1])
 	user := payload.MattermostPayload.Username
+	timestamp := payload.MattermostPayload.Timestamp
 	return Content{
-		User:    user,
-		Message: message,
+		User:      user,
+		Message:   message,
+		Timestamp: timestamp,
 	}
 }

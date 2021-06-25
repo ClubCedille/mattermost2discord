@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jonboulle/clockwork"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -27,10 +28,11 @@ func (suite *DiscordTestSuite) SetupTest() {
 	suite.TriggerWordMattermost = "2disc"
 	suite.bot = &DiscordBot{}
 	suite.testPayload = MattermostPayload{
-		Text:     "2disc test",
-		Username: "test",
-		UserID:   "test",
-		Token:    "test",
+		Text:      "2disc test",
+		Username:  "test",
+		UserID:    "test",
+		Token:     "test",
+		Timestamp: clockwork.NewFakeClock().Now(),
 	}
 
 	DiscordToken = suite.DiscordToken

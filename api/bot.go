@@ -1,6 +1,8 @@
 package api
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,8 +17,9 @@ type Bot interface {
 }
 
 type Content struct {
-	User    string
-	Message string
+	User      string
+	Message   string
+	Timestamp time.Time
 }
 
 type Payload struct {
@@ -27,9 +30,9 @@ type Payload struct {
 type DiscordPayload struct{}
 
 type MattermostPayload struct {
-	Text      string `json:"text"`
-	Username  string `json:"user_name"`
-	UserID    string `json:"user_id"`
-	Token     string `json:"token"`
-	Timestamp string `json:"timestamp"`
+	Text      string    `json:"text"`
+	Username  string    `json:"user_name"`
+	UserID    string    `json:"user_id"`
+	Token     string    `json:"token"`
+	Timestamp time.Time `json:"timestamp"`
 }
