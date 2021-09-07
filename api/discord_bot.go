@@ -25,6 +25,8 @@ func CreateDiscordBot() *DiscordBot {
 func (bot *DiscordBot) SendMessage(context *gin.Context) {
 	payload := bot.GetPayload(context)
 	content := bot.GetContent(payload)
+
+	bot.Session.ChannelTyping(DiscordChannel)
 	logger := loggerInstance()
 
 	discordMessage := fmt.Sprintf("%s said: %s", content.User, content.Message)
@@ -64,10 +66,9 @@ func (*DiscordBot) GetPayload(context *gin.Context) Payload {
 func (*DiscordBot) GetContent(payload Payload) Content {
 	message := strings.TrimSpace(strings.Split(payload.MattermostPayload.Text, TriggerWordMattermost)[1])
 	user := payload.MattermostPayload.Username
-	timestamp := payload.MattermostPayload.Timestamp
 	return Content{
-		User:      user,
-		Message:   message,
-		Timestamp: timestamp,
+		User:    user,
+		Message: message,
 	}
+
 }
