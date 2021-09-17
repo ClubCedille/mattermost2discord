@@ -25,12 +25,12 @@ func CreateDiscordBot() *DiscordBot {
 func (bot *DiscordBot) SendMessage(context *gin.Context) {
 	payload := bot.GetPayload(context)
 	content := bot.GetContent(payload)
+	message := bot.GetMention(content)
 
 	bot.Session.ChannelTyping(DiscordChannel)
 	logger := loggerInstance()
 
-	discordMessage := fmt.Sprintf("%s said: %s", content.User, content.Message)
-	_, err := bot.Session.ChannelMessageSend(DiscordChannel, discordMessage)
+	_, err := bot.Session.ChannelMessageSend(DiscordChannel, message)
 
 	logger.Infof("Sending message to discord",
 		zap.String("user", content.User),
@@ -66,9 +66,29 @@ func (*DiscordBot) GetPayload(context *gin.Context) Payload {
 func (*DiscordBot) GetContent(payload Payload) Content {
 	message := strings.TrimSpace(strings.Split(payload.MattermostPayload.Text, TriggerWordMattermost)[1])
 	user := payload.MattermostPayload.Username
+	message = fmt.Sprintf("%s said: %s", user, message)
 	return Content{
 		User:    user,
 		Message: message,
 	}
+}
+
+func (bot *DiscordBot) GetMention(content Content) string {
+
+	channel, _ := bot.Session.Channel(DiscordChannel)
+
+	idRoles, _ := bot.Session.GuildRoles(channel.GuildID)
+
+	i := strings.Index(content.Message, "@")
+	role := strings.TrimSpace(strings.Split(content.Message[i+1:], " ")[0])
+
+	for _, v := range idRoles {
+
+		if strings.TrimSpace(v.Name) == role {
+			content.Message = strings.Replace(content.Message, "@"+role, "<@&"+v.ID+">", -1)
+		}
+	}
+
+	return content.Message
 
 }
