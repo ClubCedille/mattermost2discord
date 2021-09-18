@@ -25,6 +25,7 @@ func SetupServer() *gin.Engine {
 		})
 	})
 
+	discordBot.Session.ChannelTyping(DiscordChannel)
 	r.POST("/v1/discord-message", discordBot.SendMessage)
 
 	logger := loggerInstance()

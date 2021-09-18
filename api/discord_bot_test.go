@@ -7,6 +7,14 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/bwmarrin/discordgo"
+	"github.com/ewohltman/discordgo-mock/mockchannel"
+	"github.com/ewohltman/discordgo-mock/mockconstants"
+	"github.com/ewohltman/discordgo-mock/mockguild"
+	"github.com/ewohltman/discordgo-mock/mockrest"
+	"github.com/ewohltman/discordgo-mock/mockrole"
+	"github.com/ewohltman/discordgo-mock/mocksession"
+	"github.com/ewohltman/discordgo-mock/mockstate"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -23,8 +31,8 @@ type DiscordTestSuite struct {
 
 func (suite *DiscordTestSuite) SetupTest() {
 	suite.DiscordToken = "test"
-	suite.DiscordChannel = "test"
 	suite.TriggerWordMattermost = "2disc"
+	suite.DiscordChannel = mockconstants.TestChannel
 	suite.bot = &DiscordBot{}
 	suite.testPayload = MattermostPayload{
 		Text:     "2disc test",
@@ -32,11 +40,55 @@ func (suite *DiscordTestSuite) SetupTest() {
 		UserID:   "test",
 		Token:    "test",
 	}
-
 	DiscordToken = suite.DiscordToken
 	DiscordChannel = suite.DiscordChannel
 	TriggerWordMattermost = suite.TriggerWordMattermost
 	MattermostToken = suite.testPayload.Token
+}
+
+func mockCreateDiscordBot() *DiscordBot {
+	PanicIfDiscordBotMissesInformation()
+	state, _ := newState()
+	session, _ := mocksession.New(
+		mocksession.WithState(state),
+		mocksession.WithClient(&http.Client{
+			Transport: mockrest.NewTransport(state),
+		}),
+	)
+
+	guildBefore, _ := session.Guild(mockconstants.TestGuild)
+	session.GuildRoleCreate(guildBefore.ID)
+
+	return &DiscordBot{
+		Session: session,
+	}
+}
+
+func newState() (*discordgo.State, error) {
+
+	role := mockrole.New(
+		mockrole.WithID(mockconstants.TestRole),
+		mockrole.WithName(mockconstants.TestRole),
+		mockrole.WithPermissions(discordgo.PermissionViewChannel),
+	)
+	role.Mentionable = true
+	channel := mockchannel.New(
+		mockchannel.WithID(mockconstants.TestChannel),
+		mockchannel.WithGuildID(mockconstants.TestGuild),
+		mockchannel.WithName(mockconstants.TestChannel),
+		mockchannel.WithType(discordgo.ChannelTypeGuildVoice),
+	)
+
+	return mockstate.New(
+		mockstate.WithGuilds(
+			mockguild.New(
+				mockguild.WithID(mockconstants.TestGuild),
+				mockguild.WithName(mockconstants.TestGuild),
+				mockguild.WithRoles(role),
+				mockguild.WithChannels(channel),
+			),
+		),
+	)
 }
 
 func TestDiscordBot(t *testing.T) {
@@ -44,7 +96,7 @@ func TestDiscordBot(t *testing.T) {
 }
 
 func (suite *DiscordTestSuite) TestCreateDiscordBot() {
-	bot := CreateDiscordBot()
+	bot := mockCreateDiscordBot()
 	assert.NotNil(suite.T(), bot.Session)
 }
 
@@ -80,6 +132,8 @@ func (suite *DiscordTestSuite) TestDiscordGetPayloadError() {
 }
 
 func (suite *DiscordTestSuite) TestDiscordBotGetContent() {
+
+	gin.SetMode(gin.TestMode)
 	content := suite.bot.GetContent(Payload{
 		&DiscordPayload{},
 		&suite.testPayload,
@@ -92,14 +146,12 @@ func (suite *DiscordTestSuite) TestDiscordBotGetContent() {
 
 func (suite *DiscordTestSuite) TestDiscordBotSendMessage() {
 	gin.SetMode(gin.TestMode)
+	suite.testPayload.Text = "2disc test @" + mockconstants.TestRole
 	context, _ := gin.CreateTestContext(httptest.NewRecorder())
-	bot := CreateDiscordBot()
-
 	jsonData, _ := json.Marshal(suite.testPayload)
-
 	reader := bytes.NewReader(jsonData)
 	context.Request = httptest.NewRequest(http.MethodPost, "/v1/discord-message", reader)
-
+	bot := mockCreateDiscordBot()
 	assert.NotPanics(suite.T(), func() {
 		bot.SendMessage(context)
 	})
