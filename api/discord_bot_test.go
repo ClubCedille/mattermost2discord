@@ -146,11 +146,14 @@ func (suite *DiscordTestSuite) TestDiscordBotGetContent() {
 
 func (suite *DiscordTestSuite) TestDiscordBotSendMessage() {
 	gin.SetMode(gin.TestMode)
+
 	suite.testPayload.Text = "2disc test @" + mockconstants.TestRole
+
 	context, _ := gin.CreateTestContext(httptest.NewRecorder())
 	jsonData, _ := json.Marshal(suite.testPayload)
 	reader := bytes.NewReader(jsonData)
 	context.Request = httptest.NewRequest(http.MethodPost, "/v1/discord-message", reader)
+
 	bot := mockCreateDiscordBot()
 	assert.NotPanics(suite.T(), func() {
 		bot.SendMessage(context)

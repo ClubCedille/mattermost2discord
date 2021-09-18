@@ -85,13 +85,10 @@ func (bot *DiscordBot) GetMention(content Content) string {
 		roleFound := strings.TrimSpace(strings.Split(content.Message[i+1:], " ")[0])
 
 		for _, role := range roles {
-
 			if strings.TrimSpace(role.Name) == roleFound {
 				content.Message = strings.Replace(content.Message, "@"+roleFound, role.Mention(), -1)
-
 			}
 		}
-
 		return content.Message
 	}
 	return content.Message
