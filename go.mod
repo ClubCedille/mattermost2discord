@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/bwmarrin/discordgo v0.23.3-0.20210520041320-df74d8bbe6cd
 	github.com/ewohltman/discordgo-mock v0.0.5
-	github.com/gin-gonic/gin v1.7.4
+	github.com/gin-gonic/gin v1.7.7
 	github.com/go-playground/validator/v10 v10.9.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
